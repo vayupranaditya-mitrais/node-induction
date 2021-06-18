@@ -26,14 +26,21 @@ const sendFile = (req, res) => {
 }
 
 const routes = {
-    '/': sendFile
+    '/': {
+        get: sendFile
+    }
 }
 
 const route = (req, res) => {
     let uriPath = req.url.toLowerCase();
-    handler = routes[uriPath];
-    if (handler) return handler(req, res);
-    return errResponse(res, 404, 'not_found');
+    let uriRoute = routes[uriPath];
+    if (!uriRoute) return errResponse(res, 404, 'not_found');
+
+    let method = req.method.toLowerCase();
+    let handler = routes[uriPath][method];
+    if (!handler) return errResponse(res, 405, 'method_not_allowed');
+
+    return handler(req, res);
 }
 
 http.createServer((req, res) => {
