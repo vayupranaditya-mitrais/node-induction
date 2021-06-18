@@ -1,0 +1,19 @@
+{
+  "name": "node_training_vayu",
+  "version": "1.0.0",
+  "description": "Node Induction Training - Vayu",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vayupranaditya-mitrais/node-induction.git"
+  },
+  "author": "I Gusti Bagus Vayupranaditya Putraadinatha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vayupranaditya-mitrais/node-induction/issues"
+  },
+  "homepage": "https://github.com/vayupranaditya-mitrais/node-induction#readme"
+}
