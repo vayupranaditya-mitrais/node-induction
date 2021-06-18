@@ -1,3 +1,5 @@
+"use strict";
+
 const http = require('http');
 const fs = require('fs');
 const port = 8000;
@@ -15,7 +17,7 @@ const errResponse = (res, status, msg) => {
 
 const sendFile = (req, res) => {
     try {
-        foods = fs.readFileSync('./assets/foods.json');
+        let foods = fs.readFileSync('./assets/foods.json');
         res.writeHead(200);
         res.end(foods.toString());
     } catch (err) {
