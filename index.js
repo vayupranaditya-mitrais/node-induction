@@ -18,7 +18,7 @@ app.use('/person', require('./routes/person'));
 // Handle 404
 const {_, NotFoundError} = require('./helpers/errors');
 app.all('*', (req, res) => {
-    throw new NotFoundError(new Error());
+    throw new NotFoundError('', 'url_not_found');
 });
 
 // Error middlewares

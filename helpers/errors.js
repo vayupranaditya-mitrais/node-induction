@@ -1,24 +1,34 @@
 "use strict";
 
 class InternalError extends Error {
-    constructor(err) {
+    constructor(logMsg) {
         super();
         this.status = 500;
-        this.logMsg = err.message;
-        this.resMsg = 'internal_error';
+        this.logMsg = logMsg;
+        this.responseMsg = 'internal_error';
     }
 }
 
 class NotFoundError extends Error {
-    constructor(err) {
+    constructor(logMsg, responseMsg) {
         super();
         this.status = 404;
-        this.logMsg = err.message;
-        this.resMsg = 'not_found';
+        this.logMsg = logMsg;
+        this.responseMsg = responseMsg;
+    }
+}
+
+class ValidationError extends Error {
+    constructor(responseMsgs) {
+        super();
+        this.status = 422;
+        this.logMsg = null;
+        this.responseMsg = responseMsgs;
     }
 }
 
 module.exports = {
     InternalError,
-    NotFoundError
+    NotFoundError,
+    ValidationError
 };

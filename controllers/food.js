@@ -10,7 +10,7 @@ const index = (req, res) => {
         res.writeHead(200);
         res.end(foods.toString());
     } catch (err) {
-        throw new InternalError(err);
+        throw new InternalError(err.message);
     }
     return null;
 }

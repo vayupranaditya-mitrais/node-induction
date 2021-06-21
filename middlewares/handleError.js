@@ -1,10 +1,10 @@
 "use strict";
 
 const handleError = (customErr, req, res, next) => {
-    console.error(customErr.logMsg);
+    if (customErr.logMsg) console.error(customErr.logMsg);
     res.writeHead(customErr.status);
     res.end(JSON.stringify({
-        err: customErr.resMsg
+        err: customErr.responseMsg
     }));
 }
 
