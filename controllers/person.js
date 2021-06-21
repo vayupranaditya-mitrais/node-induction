@@ -10,16 +10,64 @@ const {
 
 const FILE_PATH = './storage/person.json';
 
+const matchPattern = (param, field) => {
+    if (Number.isInteger(field)) return field == Number(param);
+    return field.search(param) != -1;
+};
+
+const searchIdx = (param, attrName, people) => {
+    let indexes = [];
+    for (let i = 0; i < people.length; i++) {
+        const person = people[i];
+        if (matchPattern(param, person[attrName])) indexes.push(i);
+    }
+    return indexes;
+};
+
+const intersectArrays = (array1, array2) => {
+    return array1.filter(element => array2.includes(element));
+}
+
+const searchCombination = (params, people) => {
+    // Search in every attr specified
+    let resultIdx = [];
+    let checked = false;
+    for (const key in params) {
+        if (Object.hasOwnProperty.call(params, key) && params[key]) {
+            const param = params[key];
+            let attrSearchResult = searchIdx(param, key, people);
+
+            // Apply AND operator to queries
+            if (!checked) {
+                resultIdx = attrSearchResult;
+                checked = true;
+            } else {
+                resultIdx = intersectArrays(resultIdx, attrSearchResult);
+            }
+        }
+    }
+
+    // Get result from people
+    let result = [];
+    for (let i = 0; i < resultIdx.length; i++) {
+        const idx = resultIdx[i];
+        result.push(people[idx]);
+    }
+    return result;
+};
 
 const index = (req, res) => {
     try {
-        var people = fs.readFileSync(FILE_PATH);
+        var people = JSON.parse(fs.readFileSync(FILE_PATH));
     } catch (err) {
         throw new InternalError(err.message);
     }
 
+    if (Object.keys(req.query).length)
+        people = searchCombination(req.query, people);
+
     let response = {
-        people: JSON.parse(people)
+        people: people
     };
 
     res.writeHead(200);
