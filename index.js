@@ -8,8 +8,8 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 
 // Middlewares
-const setGlobalHeaders = require('./middlewares/setGlobalHeaders');
-app.use(setGlobalHeaders);
+app.use(require('./middlewares/setGlobalHeaders'));
+app.use(require('./middlewares/logActivity'));
 
 // Sub App routes
 app.use('/food', require('./routes/food'));
