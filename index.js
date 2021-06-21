@@ -8,6 +8,7 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 
 // Middlewares
+app.use(express.json());
 app.use(require('./middlewares/setGlobalHeaders'));
 app.use(require('./middlewares/logActivity'));
 

@@ -8,10 +8,12 @@ const {
     ValidationError
 } = require('../helpers/errors');
 
+const FILE_PATH = './storage/person.json';
+
 
 const index = (req, res) => {
     try {
-        var people = fs.readFileSync('./storage/person.json');
+        var people = fs.readFileSync(FILE_PATH);
     } catch (err) {
         throw new InternalError(err.message);
     }
@@ -33,7 +35,7 @@ const findById = (personId, people) => {
 
 const findOne = (req, res) => {
     try {
-        var people = fs.readFileSync('./storage/person.json');
+        var people = fs.readFileSync(FILE_PATH);
     } catch (err) {
         throw new InternalError(err.message);
     }
@@ -52,7 +54,47 @@ const findOne = (req, res) => {
     res.end(JSON.stringify(person));
 };
 
+const create = (req, res) => {
+    let {
+        name,
+        age,
+        address
+    } = req.body;
+    if (!(name && age && address)) throw new ValidationError([
+        'all fields are required'
+    ]);
+
+    try {
+        var people = JSON.parse(fs.readFileSync(FILE_PATH));
+    } catch (err) {
+        throw new InternalError(err.message);
+    }
+    
+    let lastId = people[people.length-1].id;
+    let newPerson = {
+        id: lastId + 1,
+        name: name,
+        age: Number(age),
+        address: address
+    }
+    people.push(newPerson);
+
+    try {
+        fs.writeFileSync(FILE_PATH, JSON.stringify(people));
+    } catch (err) {
+        throw new InternalError(err.message);
+    }
+
+    let response = {
+        msg: 'success',
+        data: newPerson
+    };
+    res.writeHead(201);
+    res.end(JSON.stringify(response));
+}
+
 module.exports = {
     index,
-    findOne
+    findOne,
+    create
 };

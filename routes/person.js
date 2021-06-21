@@ -5,11 +5,13 @@ const router = express.Router();
 
 const {
     index,
-    findOne
+    findOne,
+    create
 } = require('../controllers/person');
 
 router.route('/')
-    .get(index);
+    .get(index)
+    .post(create);
 
 router.route('/:personId')
     .get(findOne);
