@@ -26,16 +26,16 @@ const index = (req, res) => {
     res.end(JSON.stringify(response));
 };
 
-const findById = (personId, people) => {
+const getIndex = (personId, people) => {
     for (let i = 0; i < people.length; i++) {
         const person = people[i];
-        if (personId === person.id) return person;
+        if (personId === person.id) return i;
     }
 };
 
 const findOne = (req, res) => {
     try {
-        var people = fs.readFileSync(FILE_PATH);
+        var people = JSON.parse(fs.readFileSync(FILE_PATH));
     } catch (err) {
         throw new InternalError(err.message);
     }
@@ -45,7 +45,7 @@ const findOne = (req, res) => {
         'personId should be int'
     ]);
 
-    let person = findById(personId, JSON.parse(people));
+    let person = people[getIndex(personId, people)];
     if (!person) {
         throw new NotFoundError('', 'no_entity');
     }
@@ -91,10 +91,44 @@ const create = (req, res) => {
     };
     res.writeHead(201);
     res.end(JSON.stringify(response));
-}
+};
+
+const remove = (req, res) => {
+    try {
+        var people = JSON.parse(fs.readFileSync(FILE_PATH));
+    } catch (err) {
+        throw new InternalError(err.message);
+    }
+
+    let personId = Number(req.params.personId);
+    if (!personId) throw new ValidationError([
+        'personId should be int'
+    ]);
+
+    let personIdx = getIndex(personId, people);
+    if (!personIdx) {
+        throw new NotFoundError('', 'no_entity');
+    }
+
+    let deletedPerson = people[personIdx];
+    people.splice(personIdx, 1);
+    try {
+        fs.writeFileSync(FILE_PATH, JSON.stringify(people));
+    } catch (err) {
+        throw new InternalError(err.message);
+    }
+
+    let response = {
+        msg: 'success',
+        data: deletedPerson
+    };
+    res.writeHead(201);
+    res.end(JSON.stringify(response));
+};
 
 module.exports = {
     index,
     findOne,
-    create
+    create,
+    remove
 };

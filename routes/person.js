@@ -6,7 +6,8 @@ const router = express.Router();
 const {
     index,
     findOne,
-    create
+    create,
+    remove
 } = require('../controllers/person');
 
 router.route('/')
@@ -14,6 +15,7 @@ router.route('/')
     .post(create);
 
 router.route('/:personId')
-    .get(findOne);
+    .get(findOne)
+    .delete(remove);
 
 module.exports = router;
