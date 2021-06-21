@@ -1,52 +1,29 @@
 "use strict";
 
-const http = require('http');
-const fs = require('fs');
-const port = 8000;
+// App related
+const express = require('express');
+const app = express();
 
-const setGlobalHeaders = (res) => {
-    res.setHeader('Content-Type', 'application/json');
-};
+require('dotenv').config();
+const PORT = process.env.PORT;
 
-const errResponse = (res, status, msg) => {
-    res.writeHead(status);
-    res.end(JSON.stringify({
-        err: msg
-    }));
-}
+// Middlewares
+const setGlobalHeaders = require('./middlewares/setGlobalHeaders');
+app.use(setGlobalHeaders);
 
-const sendFile = (req, res) => {
-    try {
-        let foods = fs.readFileSync('./assets/foods.json');
-        res.writeHead(200);
-        res.end(foods.toString());
-    } catch (err) {
-        console.error(err);
-        return errResponse(res, 500, 'internal_err');
-    }
-    return null;
-}
+// Sub App routes
+app.use('/food', require('./routes/food'));
 
-const routes = {
-    '/': {
-        get: sendFile
-    }
-}
+// Handle 404
+const {_, NotFoundError} = require('./helpers/errors');
+app.all('*', (req, res) => {
+    throw new NotFoundError(new Error());
+});
 
-const route = (req, res) => {
-    let uriPath = req.url.toLowerCase();
-    let uriRoute = routes[uriPath];
-    if (!uriRoute) return errResponse(res, 404, 'not_found');
+// Error middlewares
+const handleError = require('./middlewares/handleError');
+app.use(handleError);
 
-    let method = req.method.toLowerCase();
-    let handler = routes[uriPath][method];
-    if (!handler) return errResponse(res, 405, 'method_not_allowed');
-
-    return handler(req, res);
-}
-
-http.createServer((req, res) => {
-    setGlobalHeaders(res);
-    route(req, res)
-})
-.listen(port);
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+});
