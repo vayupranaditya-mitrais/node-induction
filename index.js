@@ -13,6 +13,7 @@ app.use(setGlobalHeaders);
 
 // Sub App routes
 app.use('/food', require('./routes/food'));
+app.use('/person', require('./routes/person'));
 
 // Handle 404
 const {_, NotFoundError} = require('./helpers/errors');
